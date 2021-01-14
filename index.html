@@ -11,14 +11,20 @@
             display: grid;
             align-items: center;
             justify-items: center;
+            background-color: darkgrey;
         }
         .game-area {
             display: grid;
             grid-template-columns: 1fr 1fr;
+            background-color: darkgreen;
+        }
+        .character {
+            border: thin solid black;
+            padding: 32px;
         }
         .card-area {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 1fr 1fr;
             margin-top: 16px;
         }
         .title {
@@ -31,6 +37,7 @@
             align-items: center;
             justify-items: center;
             cursor: pointer;
+            width: 200px;
         }
         #dealer1 {
             visibility: hidden;
@@ -41,6 +48,9 @@
         #addCards {
             visibility: visible;
         }
+        .points{
+            font-size: 20px;
+        }
     </style>
   </head>
   <body>
@@ -48,9 +58,9 @@
       <h3>Rules</h3>
       <ol>
           <li>The goal is to get as many points as possible without going over 21.</li>
-          <li>The player is dealt 2 cards automatically and can choose to add a third to earn a higher score.</li>
-          <li>Each card is worth an amount of points equivalent to the number on the card (ex. 2 of hearts gives 2 points).</li>
-          <li>All face cards are worth 10 points except for the Ace which is worth 11.</li>
+          <li>The player is dealt <b>2 cards</b> automatically and can choose to add a third to earn a higher score.</li>
+          <li>Each card is worth an amount of points equivalent to the number on the card (ex. 2 of hearts is worth 2 points).</li>
+          <li>All face cards are worth <b>10 points</b> except for the Ace which is worth 11.</li>
           <li>If the player or dealer goes over 21 points at anytime, then they automatically lose.</li>
       </ol>
     <div class="game-area">
@@ -213,24 +223,6 @@
             }
         }
 
-        var addCard = () => {
-            var newCard = deck.shift()
-
-            player2.style.visibility = "visible"
-            document.getElementById("player2").innerHTML = newCard.value + " of " + newCard.suit
-
-            playerTotal += newCard.value
-            document.getElementById("player-points").innerHTML = playerTotal
-
-            if (playerTotal > 21) {
-                dealer1.style.visibility = "visible"
-                var dealerCard1 = dealerCards[1]
-                dealerTotal += dealerCard1.value
-                document.getElementById("dealer-points").innerHTML = dealerTotal
-                setTimeout(endGame, 2000)
-            } 
-        }  
-
         var showDealer = () => {
             var dealerCard1 = dealerCards[1]
             dealerTotal += dealerCard1.value
@@ -241,5 +233,17 @@
 
             setTimeout(endGame, 2000)
         }
+
+        var addCard = () => {
+            var newCard = deck.shift()
+
+            player2.style.visibility = "visible"
+            document.getElementById("player2").innerHTML = newCard.value + " of " + newCard.suit
+
+            playerTotal += newCard.value
+            document.getElementById("player-points").innerHTML = playerTotal
+
+            showDealer()
+        }  
   </script>
 </html>
