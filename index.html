@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+        .card{
+            border: thin solid black;
+            border-radius: 16px;
+            height: 150px;
+            width: 90px;
+            margin-bottom: 16px;
+            display: grid;
+            align-items: center;
+            justify-items: center;
+        }
+        .game-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+        .card-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            margin-top: 16px;
+        }
+        .title {
+            font-size: 32px;
+        }
+        .button {
+            border-radius: 8px;
+            background-color: darkgrey;
+            display: grid;
+            align-items: center;
+            justify-items: center;
+            cursor: pointer;
+        }
+        #dealer1 {
+            visibility: hidden;
+        }
+        #player2 {
+            visibility: hidden;
+        }
+        #addCards {
+            visibility: visible;
+        }
+    </style>
+  </head>
+  <body>
+      <h1>The Game of BlackJack</h1>
+      <h3>Rules</h3>
+      <ol>
+          <li>The goal is to get as many points as possible without going over 21.</li>
+          <li>The player is dealt 2 cards automatically and can choose to add a third to earn a higher score.</li>
+          <li>Each card is worth an amount of points equivalent to the number on the card (ex. 2 of hearts gives 2 points).</li>
+          <li>All face cards are worth 10 points except for the Ace which is worth 11.</li>
+          <li>If the player or dealer goes over 21 points at anytime, then they automatically lose.</li>
+      </ol>
+    <div class="game-area">
+        <div class="character">
+            <div class="title">Dealer</div>
+            <div class="points">Total: <span id="dealer-points">0</span></div>
+            <div class="button" onclick="showDealer()">Show the Dealer's hand</div>
+            <div class="card-area">
+                <div class="card" id="dealer-0"></div>
+                <div class="card" id="dealer1"></div>
+            </div>
+        </div>
+        <div class="character">
+            <div class="title">Player</div>
+            <div class="points">Total: <span id="player-points">0</span></div>
+            <div class="button" id="addCards" onclick="addCard()">Add card</div>
+            <div class="card-area">
+                <div class="card" id="player-0"></div>
+                <div class="card" id="player-1"></div>
+                <div class="card" id="player2"></div>
+            </div>
+        </div>
+    </div>
+  </body>
+  <script>
+      //This variable is here so that it can be used anywhere else in the code
+      var deck
+
+      //These variables are to represent the cards that the player and dealer receieve
+      var playerCards
+      var dealerCards
+
+      var dealerTotal = 0
+      var playerTotal = 0
+
+      var buildDeck = () => {
+          var suits = ['hearts', 'diamonds', 'clubs', 'spades']
+          var values = [2,3,4,5,6,7,8,9,10,10,10,10,11]
+          var newDeck = []
+
+          suits.forEach((suit) => {
+              values.forEach((value) => {
+                  var card = {
+                      suit: suit,
+                      value: value,
+                  }
+
+                  newDeck.push(card)
+              })
+          })
+
+          return newDeck
+      }
+
+      //This is a function to shuffle the cards in the deck randomly
+      var shuffle = (deck) => {
+        // we declare 2 parameters here even though we won't use them since we are using Math.random() to deteremine 1 or -1 instead of these values
+        var sortFunc = (card1, card2) => { 
+            var result
+
+            //Math.random generates a random number to help with randomizing the order in which the cards are sorted
+            if ( Math.random() > .5 ) {
+            result = 1
+            } else {
+            result = -1
+            }
+
+            return result
+            }
+
+        deck.sort(sortFunc)
+
+        return deck
+        }
+
+        //This function pulls the first two cards out of the deck and puts them in an array to be returned
+         var get2cards = () => {
+            var card1 = deck.shift()
+            var card2 = deck.shift()
+
+            var selectedCards = [card1, card2]
+            return selectedCards
+        }
+
+        //This is a function meant to display the values of the cards
+        var displayCards = () => {
+            dealerCard0 = dealerCards[0]
+            document.getElementById("dealer-0").innerHTML = dealerCard0.value + " of " + dealerCard0.suit
+            dealerCard1 = dealerCards[1]
+            document.getElementById("dealer1").innerHTML = dealerCard1.value + " of " + dealerCard1.suit
+            playerCard0 = playerCards[0]
+            //This is to show the total points for the dealer based off of the one card shown
+            document.getElementById("dealer-points").innerHTML = dealerCard0.value
+
+            document.getElementById("player-0").innerHTML = playerCard0.value + " of " + playerCard0.suit
+            playerCard1 = playerCards[1]
+            document.getElementById("player-1").innerHTML = playerCard1.value + " of " + playerCard1.suit
+        }
+
+        var pointCounter = () => {
+            playerCard0 = playerCards[0]
+            playerCard1 = playerCards[1]
+
+            playerTotal = playerCard0.value + playerCard1.value
+
+            return playerTotal
+        }
+
+        var pointCounter2 = () => {
+            dealerCard0 = dealerCards[0]
+
+            dealerTotal = dealerCard0.value
+
+            return dealerTotal
+        }
+
+        //This function will set up the cards so that the game can commence
+        var startGame = () => {
+            playerTotal = 0
+            dealerTotal = 0
+            document.getElementById("player-points").innerHTML = playerTotal
+            document.getElementById("dealer-points").innerHTML = dealerTotal
+
+            dealer1.style.visibility = "hidden"
+            player2.style.visibility = "hidden"
+            addCards.style.visibility = "visible"
+
+            var newDeck = buildDeck()
+            var shuffledNewDeck = shuffle(newDeck)
+            deck = shuffledNewDeck
+
+            playerCards = get2cards()
+            dealerCards = get2cards()
+            displayCards()
+
+            playerTotal = pointCounter()
+            document.getElementById("player-points").innerHTML = playerTotal
+
+            dealerTotal = pointCounter2()
+            document.getElementById("dealer-points").innerHTML = dealerTotal
+            return playerTotal, dealerTotal
+        }
+
+        //This line tells the game to automatically create a shuffled deck at the start of the game
+        startGame()
+
+        var endGame = () => {
+            if (playerTotal > 21) {
+                alert("Your score is over 21 points, so you have automatically lost")
+            }
+            else if (playerTotal > dealerTotal) {
+                alert("Cool! You won against the dealer " + playerTotal + " to " + dealerTotal)
+            }
+            else {
+                alert("Bummer. The dealer beat you with a score of " + dealerTotal + " to " + playerTotal)
+            }
+            var answer = confirm("Would you like to play again? Press OK to restart the game")
+            if (answer) {
+                startGame()
+            }
+        }
+
+        var addCard = () => {
+            var newCard = deck.shift()
+
+            player2.style.visibility = "visible"
+            document.getElementById("player2").innerHTML = newCard.value + " of " + newCard.suit
+
+            playerTotal += newCard.value
+            document.getElementById("player-points").innerHTML = playerTotal
+
+            if (playerTotal > 21) {
+                dealer1.style.visibility = "visible"
+                var dealerCard1 = dealerCards[1]
+                dealerTotal += dealerCard1.value
+                document.getElementById("dealer-points").innerHTML = dealerTotal
+                setTimeout(endGame, 2000)
+            } 
+        }  
+
+        var showDealer = () => {
+            var dealerCard1 = dealerCards[1]
+            dealerTotal += dealerCard1.value
+
+            dealer1.style.visibility = "visible"
+            document.getElementById("dealer-points").innerHTML = dealerTotal
+            addCards.style.visibility = "hidden"
+
+            setTimeout(endGame, 2000)
+        }
+  </script>
+</html>
