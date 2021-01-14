@@ -57,11 +57,12 @@
       <h1>The Game of BlackJack</h1>
       <h3>Rules</h3>
       <ol>
-          <li>The goal is to get as many points as possible without going over 21.</li>
+          <li>The goal is to have more points than the dealer without going over 21.</li>
           <li>The player is dealt <b>2 cards</b> automatically and can choose to add a third to earn a higher score.</li>
           <li>Each card is worth an amount of points equivalent to the number on the card (ex. 2 of hearts is worth 2 points).</li>
           <li>All face cards are worth <b>10 points</b> except for the Ace which is worth 11.</li>
           <li>If the player or dealer goes over 21 points at anytime, then they automatically lose.</li>
+          <li>If the player and dealer end with the same amount of points, then the dealer wins.</li>
       </ol>
     <div class="game-area">
         <div class="character">
@@ -213,6 +214,9 @@
             }
             else if (playerTotal > dealerTotal) {
                 alert("Cool! You won against the dealer " + playerTotal + " to " + dealerTotal)
+            }
+            else if (playerTotal = dealerTotal){
+                alert("You tied with the dealer which unfortunately means that the dealer wins.")
             }
             else {
                 alert("Bummer. The dealer beat you with a score of " + dealerTotal + " to " + playerTotal)
